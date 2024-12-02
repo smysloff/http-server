@@ -21,8 +21,10 @@ export default class HttpDispatcher {
       const match = route.match(path)
       if (match) {
         const params = match.groups ?? {}
-        return (request, response) =>
-          route.run(request, response, params)
+        return (request, response) => {
+          request.params = params
+          route.run(request, response)
+        }
       }
     }
     return null

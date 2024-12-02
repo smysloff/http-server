@@ -4,8 +4,7 @@ export default class HttpRoute {
   static replace = '(?<$1>[^\/]+)'
 
   static createPattern(path) {
-    const regexp = path.replace(
-      HttpRoute.pattern, HttpRoute.replace)
+    const regexp = path.replace(HttpRoute.pattern, HttpRoute.replace)
     return new RegExp(`^${ regexp }$`)
   }
 
@@ -20,8 +19,7 @@ export default class HttpRoute {
     return path.match(this.pattern)
   }
 
-  run(request, response, params) {
-    request.params = params
+  run(request, response) {
     return this.handle(request, response)
   }
 
