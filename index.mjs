@@ -1,23 +1,12 @@
-import HttpRouter from './HttpRouter.mjs'
+import Server from './src/HttpServer.mjs'
 
-const router = new HttpRouter()
+const port = 8000
+const host = '0.0.0.0'
+const app = new Server()
 
-router.get('/', (request, response) => {
-  response.send('<h1>Home Page</h1>')
+app.get('/', (request, response) => response.send('Home Page'))
+app.get('/blog', (request, response) => response.send('Blog Page'))
+
+app.listen(port, host, () => {
+  console.log(`server: start listen on http://${ app.address }`)
 })
-
-router.get('/blog', (request, response) => {
-  response.send('<h1>List of Articles</h1>')
-})
-
-router.get('/{ category }/{ id }', (request, response) => 
-{
-  const { category, id } = request.params
-  response.send(
-    `<h1>${ category.toUpperCase() }: page id ${ id }</h1>`)
-})
-
-router.resolve('get', '/')
-router.resolve('get', '/blog')
-router.resolve('get', '/blog/14')
-router.resolve('get', '/test')
