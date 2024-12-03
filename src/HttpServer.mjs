@@ -1,5 +1,19 @@
+// file: src/HttpServer.mjs
+
 import { Server } from 'node:http'
 import Router from './HttpRouter.mjs'
+import MimeTypes from './MimeTypes.mjs'
+
+function mixin(target, ...sources) {
+  Object.assign(target, ...sources)
+}
+
+const sendable = {
+  send(message) {
+    this.write(message)
+  },
+}
+
 
 export default class HttpServer {
 
@@ -24,12 +38,17 @@ export default class HttpServer {
     this.router.add('delete', path, handle)
   }
 
-  listen(port, host, cb) {
+  listen(port, host, callback) {
     this.server.on('request', (request, response) => {
+      mixin(response, sendable) // @todo move to middleware?
+      // @todo set headers
+      response.statusCode = 200
+      response.setHeader('Content-Type', MimeTypes.get('txt'))
+      // @todo error pages
       this.router.resolve(request, response)
       response.end()
     })
-    this.server.listen(port, host, cb)
+    this.server.listen(port, host, callback)
   }
 
   get address() {

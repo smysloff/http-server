@@ -1,26 +1,32 @@
+// file: src/HttpRoute.mjs
+
 export default class HttpRoute {
 
   static pattern = /\{\s*([^\s\/]+)\s*\}/g
   static replace = '(?<$1>[^\/]+)'
 
-  static createRegExp(path) {
-    const regexp = path.replace(this.pattern, this.replace)
-    return new RegExp(`^${ regexp }$`)
-  }
-
   constructor(method, path, handle) {
     this.method = method
-    this.path = path
+    this.path = HttpRoute.createPath(path)
     this.handle = handle
-    this.regexp = HttpRoute.createRegExp(path)
   }
 
   match(path) {
-    return path.match(this.regexp)
+    const match = path.match(this.path)
+    console.log( path, this.path, match )
+    return {
+      match: match !== null,
+      params: match?.groups ?? {},
+    }
   }
 
   run(request, response) {
     this.handle(request, response)
+  }
+
+  static createPath(path) {
+    const regexp = path.replace(HttpRoute.pattern, HttpRoute.replace)
+    return new RegExp(`^${ regexp }$`)
   }
 
 }

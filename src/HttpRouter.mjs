@@ -1,4 +1,7 @@
+// file: src/HttpRouter.mjs
+
 import HttpRoute from './HttpRoute.mjs'
+import MimeTypes from './MimeTypes.mjs'
 
 export default class HttpRouter {
 
@@ -12,7 +15,8 @@ export default class HttpRouter {
   }
 
   add(method, path, handle) {
-    this.routes[method].push(new HttpRoute(method, path, handle))
+    const route = new HttpRoute(method, path, handle)
+    this.routes[method].push(route)
   }
 
   resolve(request, response) {
@@ -20,24 +24,21 @@ export default class HttpRouter {
     const method = request.method.toLowerCase()
     const path = request.url
 
-    response.send = function(content) {
-      response.write(content)
-    }
-
     for (const route of this.routes[method]) {
-      const match = route.match(path)
+      const { match, params } = route.match(path)
       if (match) {
-        const params = match.groups ?? {}
         request.params = params
-        response.statusCode = 200
-        response.setHeader('Content-Type', 'text/plain')
-        route.run(request, response)
-        return
+        return route.run(request, response)
       }
     }
 
+    return this.error404(request, response)
+
+  }
+
+  error404(request, response) {
     response.statusCode = 404
-    response.setHeader('Content-Type', 'text/plain')
+    response.setHeader('Content-Type', MimeTypes.get('txt'))
     response.send('Error 404: Page Not Found')
   }
 
