@@ -3,17 +3,8 @@
 import { Server } from 'node:http'
 import Router from './HttpRouter.mjs'
 import MimeTypes from './MimeTypes.mjs'
-
-function mixin(target, ...sources) {
-  Object.assign(target, ...sources)
-}
-
-const sendable = {
-  send(message) {
-    this.write(message)
-  },
-}
-
+import { mixin } from './Utils.mjs'
+import { sendable } from './Mixins.mjs'
 
 export default class HttpServer {
 

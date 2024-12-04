@@ -13,7 +13,6 @@ export default class HttpRoute {
 
   match(path) {
     const match = path.match(this.path)
-    console.log( path, this.path, match )
     return {
       match: match !== null,
       params: match?.groups ?? {},

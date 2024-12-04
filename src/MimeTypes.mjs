@@ -1,3 +1,5 @@
+// file: src/MimeTypes.mjs
+
 import { extname } from 'node:path'
 
 export default class MimeTypes {
